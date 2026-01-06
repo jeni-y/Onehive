@@ -1,0 +1,9 @@
+APP_NAME: app
+NAMESPACE: paas-app
+
+APP_IMAGE: myrepo/app:latest
+APP_DOMAIN: example.com
+
+DB_USER: postgres
+DB_PASSWORD: postgres
+DB_NAME: appdb

@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.APP_NAME }}-ingress
+  namespace: {{ .Values.NAMESPACE }}
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/limit-rpm: "60"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - {{ .Values.APP_DOMAIN }}
+    secretName: {{ .Values.APP_NAME }}-tls-secret
+  rules:
+  - host: {{ .Values.APP_DOMAIN }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ .Values.APP_NAME }}-service
+            port:
+              number: 80

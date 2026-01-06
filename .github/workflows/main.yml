@@ -12,6 +12,10 @@ on:
       app_domain:
         description: "Client Domain"
         required: true
+      db_enabled:
+        description: "Enable Database"
+        required: true
+        default: "false"
 
 jobs:
   deploy:
@@ -79,3 +83,4 @@ jobs:
           --set NAMESPACE=paas-$CLIENT_NAME \
           --set APP_DOMAIN=$APP_DOMAIN \
           --set APP_IMAGE=$DOCKER_REGISTRY/$CLIENT_NAME:$FRAMEWORK-latest
+          --set database.enabled=${{git.event.inputs.db_enabled}}

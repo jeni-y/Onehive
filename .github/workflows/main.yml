@@ -6,16 +6,30 @@ on:
       client_name:
         description: "Client Name"
         required: true
+
       framework:
         description: "Framework (php, node, python, go, java)"
         required: true
+
       app_domain:
         description: "Client Domain"
         required: true
+
       db_enabled:
         description: "Enable Database"
         required: true
         default: "false"
+
+      # 🔹 NEW: Client GitHub repo (owner/repo)
+      repo_url:
+        description: "GitHub repo (owner/repo)"
+        required: true
+
+      # 🔹 NEW: Branch
+      repo_branch:
+        description: "Git branch"
+        required: false
+        default: "main"
 
 jobs:
   deploy:
@@ -23,24 +37,36 @@ jobs:
 
     steps:
     # -----------------------------
-    # 1️⃣ Checkout latest repo code
+    # 1️⃣ Checkout PLATFORM repo
     # -----------------------------
-    - name: Checkout code
+    - name: Checkout platform code
       uses: actions/checkout@v3
 
     # -----------------------------
-    # 2️⃣ Set environment variables from user input
+    # 2️⃣ Set environment variables
     # -----------------------------
     - name: Set environment variables
       run: |
-        # Assign workflow_dispatch inputs to environment variables
         echo "CLIENT_NAME=${{ github.event.inputs.client_name }}" >> $GITHUB_ENV
         echo "FRAMEWORK=${{ github.event.inputs.framework }}" >> $GITHUB_ENV
         echo "APP_DOMAIN=${{ github.event.inputs.app_domain }}" >> $GITHUB_ENV
+        echo "REPO_URL=${{ github.event.inputs.repo_url }}" >> $GITHUB_ENV
+        echo "REPO_BRANCH=${{ github.event.inputs.repo_branch }}" >> $GITHUB_ENV
         echo "DOCKER_REGISTRY=myrepo" >> $GITHUB_ENV
 
     # -----------------------------
-    # 3️⃣ Log in to Docker registry
+    # 3️⃣ CLONE CLIENT REPOSITORY (NEW)
+    # -----------------------------
+    - name: Clone client GitHub repository
+      run: |
+        rm -rf app
+        git clone \
+          -b $REPO_BRANCH \
+          https://${{ secrets.CLIENT_GITHUB_TOKEN }}@github.com/$REPO_URL \
+          app
+
+    # -----------------------------
+    # 4️⃣ Log in to Docker registry
     # -----------------------------
     - name: Log in to Docker registry
       uses: docker/login-action@v2
@@ -49,7 +75,7 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     # -----------------------------
-    # 4️⃣ Build and push Docker image
+    # 5️⃣ Build and push Docker image
     # -----------------------------
     - name: Build and Push Docker Image
       run: |
@@ -57,7 +83,7 @@ jobs:
         ./scripts/build_push.sh $CLIENT_NAME $FRAMEWORK $DOCKER_REGISTRY
 
     # -----------------------------
-    # 5️⃣ Setup kubectl
+    # 6️⃣ Setup kubectl
     # -----------------------------
     - name: Set up kubectl
       uses: azure/setup-kubectl@v3
@@ -65,7 +91,7 @@ jobs:
         version: '1.30.0'
 
     # -----------------------------
-    # 6️⃣ Setup Helm
+    # 7️⃣ Setup Helm
     # -----------------------------
     - name: Set up Helm
       uses: azure/setup-helm@v3
@@ -73,7 +99,7 @@ jobs:
         version: '3.12.0'
 
     # -----------------------------
-    # 7️⃣ Deploy to Kubernetes using Helm
+    # 8️⃣ Deploy to Kubernetes
     # -----------------------------
     - name: Deploy with Helm
       run: |

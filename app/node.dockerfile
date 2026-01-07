@@ -1,53 +1,40 @@
 # ===============================
-# Base Node.js image
+# Base Node image
 # ===============================
-FROM node:20
+FROM node:20-alpine
 
 # ===============================
-# Install system dependencies
+# Install Nginx
 # ===============================
-RUN apt-get update && apt-get install -y \
-    nginx \
-    curl \
-    git \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache nginx
 
 # ===============================
-# Configure Nginx
+# Workdir
 # ===============================
-RUN rm /etc/nginx/sites-enabled/default
+WORKDIR /app
+
+# ===============================
+# Copy application
+# ===============================
+COPY app/ /app/
+
+# ===============================
+# Install deps
+# ===============================
+RUN npm install
+
+# ===============================
+# Nginx config
+# ===============================
+RUN rm -f /etc/nginx/conf.d/default.conf
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # ===============================
-# Set working directory
+# Expose port
 # ===============================
-WORKDIR /usr/src/app
+EXPOSE 80
 
 # ===============================
-# Copy application code
+# Start app + nginx
 # ===============================
-COPY ./app /usr/src/app
-
-# ===============================
-# Install Node dependencies
-# ===============================
-RUN npm install --production
-
-# ===============================
-# Ensure proper permissions
-# ===============================
-RUN chown -R node:node /usr/src/app \
-    && chmod -R 755 /usr/src/app
-
-USER node
-
-# ===============================
-# Expose app port
-# ===============================
-EXPOSE 8080
-
-# ===============================
-# Start Node.js app and Nginx
-# ===============================
-CMD ["sh", "-c", "service nginx start && node server.js"]
+CMD ["sh", "-c", "npm start & nginx -g 'daemon off;'"]

@@ -4,42 +4,39 @@
 FROM golang:1.21
 
 # ===============================
-# Install system dependencies
+# Install dependencies
 # ===============================
 RUN apt-get update && apt-get install -y \
     nginx \
-    curl \
-    git \
-    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # ===============================
-# Set working directory
+# Workdir
 # ===============================
 WORKDIR /app
 
 # ===============================
-# Copy application code
+# Copy Go app
 # ===============================
-COPY ./app /app
+COPY app/ /app/
 
 # ===============================
-# Build the Go binary
+# Build Go binary
 # ===============================
-RUN go mod tidy && go build -o server .
+RUN go mod tidy && go build -o server
 
 # ===============================
-# Configure Nginx
+# Nginx config
 # ===============================
-RUN rm /etc/nginx/sites-enabled/default
+RUN rm -f /etc/nginx/sites-enabled/default
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # ===============================
-# Expose app port
+# Expose Nginx port
 # ===============================
-EXPOSE 8080
+EXPOSE 80
 
 # ===============================
-# Start Go binary and Nginx
+# Start Go + Nginx correctly
 # ===============================
-CMD ["sh", "-c", "service nginx start && ./server"]
+CMD ["sh", "-c", "./server & nginx -g 'daemon off;'"]

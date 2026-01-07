@@ -1,51 +1,43 @@
 # ===============================
 # Base Python image
 # ===============================
-FROM python:3.12-slim
+FROM python:3.11-slim
 
 # ===============================
-# Install system dependencies
+# Install dependencies
 # ===============================
 RUN apt-get update && apt-get install -y \
     nginx \
-    curl \
-    git \
-    && apt-get clean \
+    gcc \
     && rm -rf /var/lib/apt/lists/*
 
 # ===============================
-# Configure Nginx
-# ===============================
-RUN rm /etc/nginx/sites-enabled/default
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# ===============================
-# Set working directory
+# Workdir
 # ===============================
 WORKDIR /app
 
 # ===============================
-# Copy application code
+# Copy application
 # ===============================
-COPY ./app /app
+COPY app/ /app/
 
 # ===============================
-# Install Python dependencies
+# Install Python deps
 # ===============================
 RUN pip install --no-cache-dir -r requirements.txt
 
 # ===============================
-# Ensure proper permissions
+# Nginx config
 # ===============================
-RUN chown -R www-data:www-data /app \
-    && chmod -R 755 /app
+RUN rm -f /etc/nginx/sites-enabled/default
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # ===============================
-# Expose app port
+# Expose port
 # ===============================
-EXPOSE 8080
+EXPOSE 80
 
 # ===============================
-# Start app with Gunicorn and Nginx
+# Start app + nginx
 # ===============================
-CMD ["sh", "-c", "service nginx start && gunicorn -w 4 -b 0.0.0.0:8080 app:app"]
+CMD ["sh", "-c", "gunicorn app:app --bind 0.0.0.0:8000 & nginx -g 'daemon off;'"]

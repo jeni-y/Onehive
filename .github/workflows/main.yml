@@ -146,28 +146,28 @@ jobs:
         kubectl get nodes
 
     - name: Ensure namespace exists
-    run: |
-      if ! kubectl get namespace paas-$CLIENT_NAME >/dev/null 2>&1; then
-      kubectl create namespace paas-$CLIENT_NAME
-      fi
+      run: |
+        if ! kubectl get namespace paas-$CLIENT_NAME >/dev/null 2>&1; then
+        kubectl create namespace paas-$CLIENT_NAME
+        fi
 
     # -----------------------------
     # 1️⃣1️⃣ Deploy using Helm
     # -----------------------------
     - name: Deploy to Kubernetes
-    run: |
-      helm upgrade --install "$CLIENT_NAME" ./helm/paas-chart \
-      -n "paas-$CLIENT_NAME" \
-      --create-namespace \
-      --set app.domain="$APP_DOMAIN" \
-      --set app.image="$DOCKER_REGISTRY/$CLIENT_NAME:$FRAMEWORK-latest" \
-      --set database.enabled="$DATABASE_REQUIRED"
+      run: |
+        helm upgrade --install "$CLIENT_NAME" ./helm/paas-chart \
+        -n "paas-$CLIENT_NAME" \
+        --create-namespace \
+        --set app.domain="$APP_DOMAIN" \
+        --set app.image="$DOCKER_REGISTRY/$CLIENT_NAME:$FRAMEWORK-latest" \
+        --set database.enabled="$DATABASE_REQUIRED"
 
     # -----------------------------
     # 1️⃣2️⃣ Get ingress URL
     # -----------------------------
     - name: Get ingress URL
-    run: |
-      echo "Ingress URL:"
-      kubectl get ingress -n "paas-$CLIENT_NAME" "$CLIENT_NAME" \
-        -o jsonpath='{.spec.rules[0].host}' | sed 's/^/http:\/\//'
+      run: |
+        echo "Ingress URL:"
+        kubectl get ingress -n "paas-$CLIENT_NAME" "$CLIENT_NAME" \
+          -o jsonpath='{.spec.rules[0].host}' | sed 's/^/http:\/\//'

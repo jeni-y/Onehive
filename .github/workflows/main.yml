@@ -155,13 +155,13 @@ jobs:
     # 1️⃣1️⃣ Deploy using Helm
     # -----------------------------
     - name: Deploy to Kubernetes
-    run: |
-      helm upgrade --install $CLIENT_NAME ./helm/paas-chart \
-      -n paas-$CLIENT_NAME \
-      --create-namespace \
-      --set app.domain="$APP_DOMAIN" \
-      --set app.image="$DOCKER_REGISTRY/$CLIENT_NAME:$FRAMEWORK-latest" \
-      --set database.enabled="$DATABASE_REQUIRED"
+      run: |
+        helm upgrade --install $CLIENT_NAME ./helm/paas-chart \
+        -n paas-$CLIENT_NAME \
+        --create-namespace \
+        --set app.domain="$APP_DOMAIN" \
+        --set app.image="$DOCKER_REGISTRY/$CLIENT_NAME:$FRAMEWORK-latest" \
+        --set database.enabled="$DATABASE_REQUIRED"
 
     # -----------------------------
     # 1️⃣2️⃣ Get ingress URL

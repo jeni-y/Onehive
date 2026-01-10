@@ -156,11 +156,11 @@ jobs:
     # -----------------------------
     - name: Deploy to Kubernetes
       run: |
-        helm upgrade --install jksuwenz ./helm/paas-chart \
-        -n paas-jksuwenz \
+        helm upgrade --install "${CLIENT_NAME}" ./helm/paas-chart \
+        -n "paas-${CLIENT_NAME}" \
         --create-namespace \
-        --set APP_IMAGE="docker.io/username/jksuwenz:php-latest" \
-        --set APP_DOMAIN="example.com" \
+        --set APP_IMAGE="docker.io/username/"${CLIENT_NAME}:php-latest" \
+        --set APP_DOMAIN="${CLIENT_NAME}" \
         --wait
         --timeout 5m0s
 

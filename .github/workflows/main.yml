@@ -57,7 +57,6 @@ jobs:
         echo "APP_DOMAIN=${{ github.event.inputs.app_domain }}" >> $GITHUB_ENV
         echo "REPO_URL=${{ github.event.inputs.repo_url }}" >> $GITHUB_ENV
         echo "REPO_BRANCH=${{ github.event.inputs.repo_branch }}" >> $GITHUB_ENV
-        echo "DATABASE_REQUIRED=${{ github.event.inputs.database_required }}" >> $GITHUB_ENV
         echo "CLIENT_GITHUB_TOKEN=${{ github.event.inputs.client_github_token }}" >> $GITHUB_ENV
         echo "DOCKER_REGISTRY=docker.io/${{ secrets.DOCKER_USERNAME }}" >> $GITHUB_ENV
 

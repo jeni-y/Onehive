@@ -1,0 +1,9 @@
+{{- if .Values.DB_SCHEMA_ENABLED }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-db-schema
+data:
+  schema.sql: |
+{{ .Files.Get "app/db/schema.sql" | indent 4 }}
+{{- end }}

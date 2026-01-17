@@ -118,7 +118,7 @@ jobs:
       run : |
         set -euo pipefail
         mkdir -p helm/paas-chart/app/db
-        cp app/db/schema.sql helm/paas-chart/app/db/schema.sql
+        cp app/schema.sql helm/paas-chart/app/db/schema.sql
         echo "✅ schema.sql injected into Helm chart"
 
     # -----------------------------

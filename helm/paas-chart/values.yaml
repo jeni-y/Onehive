@@ -7,6 +7,7 @@ DB_USER: postgres
 DB_PASSWORD: postgres
 DB_NAME: appdb
 DB_ENABLED: true
+DB_SCHEMA_ENABLED: false   # <-- New! Will be set to true by GitHub Actions if schema.sql exists
 
 # Upload PVC
 UPLOAD_ENABLED: true

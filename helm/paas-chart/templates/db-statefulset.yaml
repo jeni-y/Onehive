@@ -14,7 +14,7 @@ spec:
         app: {{ .Release.Name }}-db
     spec:
       securityContext:
-        runAsNonRoot: true
+        runAsNonRoot: false
         fsGroup: 999
 
       containers:

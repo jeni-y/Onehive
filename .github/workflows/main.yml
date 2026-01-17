@@ -190,7 +190,7 @@ jobs:
           --set DB_USER="$DB_USER" \
           --set DB_NAME="$DB_NAME" \
           --wait \
-          --timeout 5m \
+          --timeout 15m \
           --debug
 
     # -----------------------------

@@ -20,7 +20,7 @@ spec:
       - name: web
         image: {{ .Values.APP_IMAGE }}
         ports:
-        - containerPort: 8080
+        - containerPort: 80
 
         envFrom:
         - configMapRef:
